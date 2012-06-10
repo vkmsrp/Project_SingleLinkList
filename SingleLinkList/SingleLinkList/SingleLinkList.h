@@ -85,6 +85,7 @@ public:
 	/* Single link list operations */
 	inline unsigned int Length();
 	inline bool IsEmpty();
+	unsigned int GetCount();
 	void Pushback(const T& inData);
 	void Pushfront(const T& inData);
 	//T Popback();
@@ -96,7 +97,9 @@ public:
 	//void Remove(const T& inData);
 	//T& GetAt(const unsigned int inIndex);
 
-
+private:
+	void IncrementLength();
+	void DecrementLength();
 
 private:
 	Node<T>* mListHead;
@@ -122,18 +125,33 @@ unsigned int SingleLinkList<T>::Length() {
 }
 
 template<typename T>
-bool SingleLinkList<T>::IsEmpty() {
-	if(length <= 0) {
-		return true;
-	}
-	else {
-		return false;
+void SingleLinkList<T>::IncrementLength() {
+	mLength++;
+}
+
+template<typename T>
+void SingleLinkList<T>::DecrementLength() {
+	if(mLength >=) {
+		mLength--;
 	}
 }
 
 template<typename T>
+unsigned int SingleLinkList<T>::GetCount() {
+	return mLength;
+}
+
+template<typename T>
+bool SingleLinkList<T>::IsEmpty() {
+	if(mLength <= 0)
+		return true;
+	else
+		return false;
+}
+
+template<typename T>
 void SingleLinkList<T>::Pushfront(const T& inData) {
-	Node<T>* newNode = new Node(inData);
+	Node<T>* newNode = new Node<T>(inData);
 	if(!newNode) {
 		return;
 	}
@@ -149,11 +167,13 @@ void SingleLinkList<T>::Pushfront(const T& inData) {
 		newNode->mNext = this->mListHead;
 		this->mListHead = newNode;
 	}
+
+	this->IncrementLength();
 }
 
 template<typename T>
 void SingleLinkList<T>::Pushback(const T& inData) {
-	Node<T>* newNode = new Node(inData);
+	Node<T>* newNode = new Node<T>(inData);
 	if(!newNode){
 		return;
 	}
@@ -169,9 +189,11 @@ void SingleLinkList<T>::Pushback(const T& inData) {
 		/* If the link-list is containing element. */
 		Node<T>* tempNode = this->mListHead;
 		while(tempNode->mNext != NULL) {
-			tempNode = temp->next;
+			tempNode = tempNode->mNext;
 		}
 		tempNode->mNext = newNode;
 		newNode->mNext = NULL;
 	}
+
+	this->IncrementLength();
 }
