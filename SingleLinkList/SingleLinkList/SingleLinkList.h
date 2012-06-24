@@ -124,16 +124,18 @@ public:
 	void Pushfront(const T& inData);
 	T Popback();
 	T Popfront();
-	//Node& InsertAfter(const Node& inNode);
-	//Node& InsertBefore(const Node& inNode);
-	//Node& RemoveAfter(const Node& inNode);
-	//Node& RemoveBefore(const& inNode);
+	Node<T>& InsertAfter(const Node<T>& node, const T& data);
+	Node<T>& InsertBefore(const Node<T>& node, const T& data);
+	void Remove(const Node<T>& node);
 	//void Remove(const T& inData);
 	//T& GetAt(const unsigned int inIndex);
+	//Node<T>* Find(const Node<T>& node);
+	//Node<T>* Find(const T& data);
 
 private:
 	void IncrementLength();
 	void DecrementLength();
+	bool IsNodeValid(const Node<T>& node);
 
 private:
 	Node<T>* mListHead;
@@ -168,6 +170,20 @@ void SingleLinkList<T>::DecrementLength() {
 	if(mLength >=) {
 		mLength--;
 	}
+}
+
+template<typename T>
+bool SingleLinkList<T>::IsNodeValid(const Node<T>& node) {
+	if(*node == NULL || this->IsEmpty()) {
+		return false;
+	}
+	Node<T>* tempNode = this->mHeadList;
+	while(tempNode->GetNext() != NULL) {
+		if(tempNode == *node) {
+			return true;
+		}
+	}
+	return false;
 }
 
 template<typename T>
@@ -234,6 +250,7 @@ void SingleLinkList<T>::Pushback(const T& inData) {
 
 template<typename T>
 T SingleLinkList<T>::Popback() {
+	T retVal;
 	if(this->IsEmpty()) {
 	}
 	else {
@@ -244,13 +261,17 @@ T SingleLinkList<T>::Popback() {
 		if(this->mListHead == tempNode){
 			mListHead = NULL;
 		}
+		retVal = tempNode->GetData();
 		delete tempNode;
 		this->DecrementLength();
 	}
+
+	return retVal;
 }
 
 template<typename T>
 T SingleLinkList<T>::Popfront() {
+	T retVal;
 	if(this->IsEmpty()) {
 	}
 	else {
@@ -261,6 +282,43 @@ T SingleLinkList<T>::Popfront() {
 		else {
 			this->mListHead = mListHead->GetNext();
 		}
+		retVal = tempNode->GetData();
+		delete tempNode;
+	}
+	return retVal;
+}
+
+template<typename T>
+Node<T>& SingleLinkList<T>::InsertAfter(const Node<T>& node, const T& data) {
+	if(this->IsNodeValid()) {
+		Node<T>* newNode = new Node<T>(data);
+		newNode->SetNext(node.GetNext());
+		node.SetNext(newNode);
+		return *newNode;
+	}
+	else {
+	}
+}
+
+template<typename T>
+Node<T>& SingleLinkList<T>::InsertBefore(const Node<T>& node, const T& data) {
+	if(this->IsNodeValid()) {
+		Node<T>* newNode = new Node<T>(node->GetData());
+		newNode->SetNext(node.GetNext());
+		node.SetNext(newNode);
+		node.SetData(data);
+		return node;
+	}
+	else {
+	}
+}
+
+template<typename T>
+void SingleLinkList<T>::Remove(const Node<T>& node) {
+	if(this->IsNodeValid()) {
+		node->SetData(node->GetNext()->GetData());
+		Node<T>* tempNode = node->GetNext();
+		node->SetNext(node->GetNext()->GetNext());
 		delete tempNode;
 	}
 }
