@@ -14,6 +14,15 @@ public:
 	inline bool operator==(const Node &rhs) const;
 	Node& operator=(Node const &rhs);
 
+	/*
+	 * Accessor functions.
+	 */
+	inline T GetData();
+	inline void SetData(const T& data);
+	inline Node<T>* GetNext();
+	inline void SetNext(Node<T>* next);
+
+private:
 	T mData;
 	Node* mNext;
 };
@@ -70,6 +79,31 @@ Node<T>& Node<T>::operator=(const Node& rhs) {
 	}
 }
 
+
+/*
+** Accessor functions for Node class.
+**/
+template<typename T>
+inline T Node<T>::GetData() {
+	return mData;
+}
+
+template<typename T>
+inline void Node<T>::SetData(const T& data) {
+	mData = data;
+}
+
+template<typename T>
+inline Node<T>* Node<T>::GetNext() {
+	return mNext;
+}
+
+template<typename T>
+inline void Node<T>::SetNext(Node<T>* next) {
+	mNext = next;
+}
+
+
 /*
  * Single List class
  */
@@ -88,8 +122,8 @@ public:
 	unsigned int GetCount();
 	void Pushback(const T& inData);
 	void Pushfront(const T& inData);
-	//T Popback();
-	//T Popfront();
+	T Popback();
+	T Popfront();
 	//Node& InsertAfter(const Node& inNode);
 	//Node& InsertBefore(const Node& inNode);
 	//Node& RemoveAfter(const Node& inNode);
@@ -155,16 +189,16 @@ void SingleLinkList<T>::Pushfront(const T& inData) {
 	if(!newNode) {
 		return;
 	}
-	newNode->mData = inData;
+	newNode->SetData(inData);
 
 	/* If the link-list is empty */
 	if(this->IsEmpty()) {
-		newNode->mNext = NULL;
+		newNode->SetNext(NULL);
 		this->mListHead = newNode;
 	}
 	else {
 		/* If the link-list is containing element. */
-		newNode->mNext = this->mListHead;
+		newNode->SetNext(this->mListHead);
 		this->mListHead = newNode;
 	}
 
@@ -178,22 +212,55 @@ void SingleLinkList<T>::Pushback(const T& inData) {
 		return;
 	}
 
-	newNode->mData = inData;
+	newNode->SetData(inData);
 
 	/* If link-list is empty. */
 	if(this->IsEmpty()) {
-		newNode->mNext = NULL;
+		newNode->SetNext(NULL);
 		this->mListHead = newNode;
 	}
 	else {
 		/* If the link-list is containing element. */
 		Node<T>* tempNode = this->mListHead;
-		while(tempNode->mNext != NULL) {
-			tempNode = tempNode->mNext;
+		while(tempNode->GetNext() != NULL) {
+			tempNode = tempNode->GetNext();
 		}
-		tempNode->mNext = newNode;
-		newNode->mNext = NULL;
+		tempNode->SetNext(newNode);
+		newNode->SetNext(NULL);
 	}
 
 	this->IncrementLength();
+}
+
+template<typename T>
+T SingleLinkList<T>::Popback() {
+	if(this->IsEmpty()) {
+	}
+	else {
+		Node<T>* tempNode = this->mListHead;
+		while(tempNode->GetNext() != NULL) {
+			tempNode = tempNode->GetNext();
+		}
+		if(this->mListHead == tempNode){
+			mListHead = NULL;
+		}
+		delete tempNode;
+		this->DecrementLength();
+	}
+}
+
+template<typename T>
+T SingleLinkList<T>::Popfront() {
+	if(this->IsEmpty()) {
+	}
+	else {
+		Node<T>* tempNode = this->mListHead;
+		if(mListHead->GetNext() == NULL) {
+			this->mListHead->SetNext(NULL);
+		}
+		else {
+			this->mListHead = mListHead->GetNext();
+		}
+		delete tempNode;
+	}
 }
